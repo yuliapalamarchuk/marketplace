@@ -7,6 +7,8 @@ export /* async */ function getClientOptions(/* {app, router, ...} */ options) {
         uri:
           process.env.GRAPHQL_URI ||
           'https://viable-horse-29.hasura.app/v1/graphql',
+
+          // headers request
           headers: {
             "x-hasura-admin-secret": "XH7uEwxRrV9wF3r"
           }
