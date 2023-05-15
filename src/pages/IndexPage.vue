@@ -1,17 +1,31 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
+  <q-page>
+    <!-- when the query response is not received yet, data from it is undefined,
+    so before referring to it we need to use v-if -->
+    <div v-if="post">GraphQL query result:<br />{{ post.title }}</div>
+    <div v-else>
+      loading...
+    </div>
   </q-page>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+  import gql from 'graphql-tag'
 
-export default defineComponent({
-  name: 'IndexPage'
-})
+  export default {
+    name: 'PageIndex',
+
+    // https://apollo.vuejs.org/guide/apollo/#usage-in-vue-components
+    apollo: {
+      post: {
+        query: gql`
+          query {
+            post(id: 5) {
+              title
+            }
+          }
+        `
+      }
+    }
+  }
 </script>

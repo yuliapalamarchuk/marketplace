@@ -1,7 +1,5 @@
 <template>
-<h1 class="text-center">Готовь бочок</h1>
-
-
+ 
 
 
 
@@ -20,17 +18,4 @@
 
 
 
-
-
-
-
-
-
-
-
-<script>
-export default {
-  name: "cart"
-}
-</script>
 
