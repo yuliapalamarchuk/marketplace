@@ -1,40 +1,42 @@
 <template>
   <q-page>
-    <div class="text-center text-h1 text-purple q-pa-xl">Я самая лучшая</div>
+    <div class="text-center text-h1 text-purple q-pa-xl">Каталог книг</div>
     <div class="row col-12 justify-end">
       <q-card class="col-md-3 col-xl-3 col-sm-12 flex justify-center">
-        <q-select
-          label="Flip up/down"
-          transition-show="flip-up"
-          transition-hide="flip-down"
-          filled
-          v-model="model"
-          :options="options"
-          style="width: 100%"
-        />
+        <div class="q-pa-md" style="width: 300px">
+          <div class="q-gutter-md">
+            <q-select
+              filled
+              v-model="model"
+              :options="options"
+              label="Выберите жанр"
+              emit-value
+              map-options
+            />
+          </div>
+        </div>
       </q-card>
       <q-card
         class="my-card col-xl-3 col-md-3 col-sm-6 col-xs-12 flex no-wrap"
-        v-for="product in products"
-        :key="product.id"
+        v-for="book in books"
+        :key="book.id"
       >
         <q-card-section>
-          <q-img :src="product.image" width="250px">
-            <div class="absolute-bottom text-h6">Title</div>
+          <q-img :src="book.image" width="250px">
+            <div class="absolute-top text-subtitle1">
+              {{ book.genre }}
+            </div>
+            <div class="absolute-bottom text-h6">
+              {{ book.author }} - {{ book.title }}
+            </div>
           </q-img>
           <q-card-section class="col">
-            {{ product.title }}
+            {{ book.description }}
           </q-card-section>
+          <q-btn color="black" label="Подробнее" />
         </q-card-section>
       </q-card>
     </div>
-
-    <!-- <q-item v-for="product in products" :key="product.id">
-      <q-item-label>
-        {{ product.title }}
-      </q-item-label>
-      <q-item-label caption>ID: {{ product.id }}</q-item-label>
-    </q-item> -->
 
     <q-page-container>
       <router-view />
@@ -54,14 +56,31 @@ import gql from "graphql-tag";
 const router = useRouter();
 const { result, loading } = useQuery(gql`
   query MyQuery {
-    products {
-      id
-      title
+    books {
+      author
+      genre
+      description
       image
+      price
+      title
     }
   }
 `);
-const products = computed(() => result.value?.products ?? []);
+const books = computed(() => result.value?.books ?? []);
+
+const model = ref("");
+
+const options = [
+  {
+    label: "Художественная литература",
+  },
+  {
+    label: "Компьютерная литература",
+  },
+  {
+    label: "Научная литература",
+  },
+];
 
 // SET_TO_BASKET
 </script>
