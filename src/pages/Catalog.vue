@@ -87,27 +87,35 @@ import { defineComponent, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { EventBus } from "quasar";
+import { useBooksStore } from "stores/index";
 
 const router = useRouter();
-/**
+
+const piniaStore = useBooksStore();
+
+/*
  * add data from hasura
  */
-const { result, loading } = useQuery(gql`
-  query MyQuery {
-    books {
-      author
-      genre
-      description
-      image
-      price
-      title
-      fulldescription
-    }
-  }
-`);
-const books = computed(() => result.value?.books ?? []);
-const model = ref("");
+// const { result, loading } = useQuery(gql`
+//   query MyQuery {
+//     books {
+//       author
+//       genre
+//       description
+//       image
+//       price
+//       title
+//       fulldescription
+//     }
+//   }
+// `);
+// const books = computed(() => result.value?.books ?? []);
+// const model = ref("");
+
+/* get books from api */
+piniaStore.GET_BOOKS_FROM_API();
+const books = piniaStore.books;
+
 /**
  * addtocartcounter
  */
