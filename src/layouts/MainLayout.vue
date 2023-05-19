@@ -8,7 +8,7 @@
     >
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn
-         
+         to="/homepage"
           round
           dense
           flat
@@ -56,7 +56,7 @@
                     <div>Signed in as <strong>Mary</strong></div>
                   </q-item-section>
                 </q-item>
-                <q-item clickable class="GL__menu-link">
+                <q-item to="/profile" clickable class="GL__menu-link">
                   <q-item-section>Your profile</q-item-section>
                 </q-item>
 

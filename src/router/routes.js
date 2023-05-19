@@ -6,7 +6,8 @@ const routes = [
       { path: "", component: () => import("pages/IndexPage.vue") },
       { path: "/catalog", component: () => import("pages/Catalog.vue") },
       { path: "/cart", component: () => import("pages/Cart.vue") },
-     
+      { path: "/homepage", component: () => import("pages/HomePage.vue") },
+      { path: "/profile", component: () => import("pages/Profile.vue") },
     ],
   },
 
