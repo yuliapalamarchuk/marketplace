@@ -1,10 +1,15 @@
 <template>
   <q-page>
-    <div class="text-center text-h1 text-purple q-pa-xl">Каталог книг</div>
+    <div class="text-center text-h2 q-pa-xl">Каталог книг</div>
     <div class="row col-12 justify-end">
       <q-card class="col-md-3 col-xl-3 col-sm-12 flex justify-center">
         <div class="q-pa-md">
-          <q-option-group :options="options" type="radio" v-model="group" />
+          <q-option-group
+            :options="options"
+            type="checkbox"
+            :select="filterByGenres(model)"
+            v-model="model"
+          />
         </div>
         <q-select
           filled
@@ -16,7 +21,7 @@
       </q-card>
       <q-card
         class="my-card col-xl-3 col-md-3 col-sm-6 col-xs-12 flex no-wrap"
-        v-for="book in books"
+        v-for="book in selectedGenres"
         :key="book.id"
       >
         <q-card-section>
@@ -57,7 +62,7 @@
           <q-card>
             <q-card-section class="row items-center q-pb-none">
               <div class="flex justify-between col">
-                <div class="text-h6">
+                <div class="text-subtitle1">
                   {{ descDial.author }} - {{ descDial.title }}
                 </div>
                 <q-btn icon="close" flat round dense v-close-popup />
@@ -106,9 +111,34 @@ const { result, loading } = useQuery(gql`
   }
 `);
 const books = computed(() => result.value?.books ?? []);
-const model = ref("");
+const model = ref([]);
 
-/* get books from api */
+/**
+ * filter by genres
+ */
+
+const filteredBooks = ref([]);
+
+const filterByGenres = (model) => {
+  filteredBooks.value.length = 0;
+  for (let i of model) {
+    books.value.map((elem) => {
+      if (elem.genre === i) {
+        filteredBooks.value.push(elem);
+      } else {
+        return;
+      }
+    });
+  }
+};
+
+const selectedGenres = computed(() => {
+  if (filteredBooks.value.length) {
+    return filteredBooks.value;
+  } else {
+    return books.value;
+  }
+});
 
 /**
  * addtocartcounter
@@ -121,25 +151,34 @@ const addToCartCounter = (index) => {
 /**
  * filter genres
  */
-const options = ref([
-  {
-    label: "Все жанры",
-    value: "genres",
-  },
+const options = [
   {
     label: "Художественная литература",
-    value: "art",
+    value: "Художественная литература",
   },
   {
     label: "Компьютерная литература",
-    value: "comp",
+    value: "Компьютерная литература",
   },
   {
     label: "Научная литература",
-    value: "science",
+    value: "Научная литература",
   },
-]);
-const group = ref(null);
+  {
+    label: "Бизнес, экономика и право",
+    value: "Бизнес, экономика и право",
+  },
+  {
+    label: "Психология и эзотерика",
+    value: "Психология и эзотерика",
+  },
+  {
+    label: "Книги в оригинале",
+    value: "Книги в оригинале",
+  },
+];
+// const group = ref("Все жанры");
+
 /**
  * sort by genre
  */
@@ -158,9 +197,6 @@ const dialogDesc = (item) => {
   icon.value = true;
 };
 const icon = ref(false);
-
-
-
 </script>
 
 <style>
