@@ -26,13 +26,14 @@
         </div>
 
         <q-input
-          ref="search"
           dark
           dense
           standout
           use-input
           color="black"
           style="width: 300px"
+          v-model="searchInput"
+          @input="inputStore(searchInput)"
         >
           <template v-slot:append>
             <q-icon name="search" />
@@ -76,19 +77,20 @@
   </q-layout>
 </template>
 
-<script>
+<script setup>
 import { ref } from "vue";
+import { getBooks } from "stores/books";
 
-export default {
-  name: "MyLayout",
+const store = getBooks()
+const searchInput = ref('')
 
-  setup() {},
-};
+const inputToStore = (searchInput)=>{
+store.INPUTDATA()
+}
 </script>
 
 <style lang="sass">
 .GL
-
   &:hover
     background: #0366d6
     color: white

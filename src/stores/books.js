@@ -7,6 +7,8 @@ export const getBooks = defineStore("counter", {
   state: () => ({
     books: ref([]),
     cart: ref([]),
+    totalValue: 0,
+    inputData: "",
   }),
 
   getters: {
@@ -30,6 +32,7 @@ export const getBooks = defineStore("counter", {
           if (i.title === descDial.title) {
             isProductExists = true;
             i.quantity++;
+            this.totalValue += i.price;
           }
           return i;
         });
@@ -39,7 +42,26 @@ export const getBooks = defineStore("counter", {
       } else {
         descDial.quantity = 1;
         this.cart.push(descDial);
+        this.totalValue += descDial.price;
       }
+    },
+    INCREMENT(book) {
+      book.quantity++;
+      this.totalValue += book.price;
+    },
+    DECREMENT(book) {
+      const bookIndex = this.cart.findIndex((item) => item === book);
+      if (book.quantity > 1) {
+        book.quantity--;
+        this.totalValue -= book.price;
+      } else {
+        this.cart.splice(bookIndex, 1);
+      }
+    },
+
+    INPUTDATA(input) {
+      this.inputData = "";
+      this.inputData = input;
     },
   },
 });

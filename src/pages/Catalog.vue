@@ -1,30 +1,43 @@
 <template>
   <q-page>
     <div class="text-center text-h2 q-pa-xl">Каталог книг</div>
+    <div class="flex q-pb-md">
+      <q-input
+        filled
+        v-model="inputData"
+        label="Label"
+        placeholder="Placeholder"
+        :dense="dense"
+        class="bg-grey"
+        style="width: 300px"
+      />
+    </div>
     <div class="">{{ store.counter }}</div>
     <div class="row col-12 justify-end">
-      <q-card class="col-md-3 col-xl-3 col-sm-12 flex justify-center">
-        <div class="q-pa-md">
-          <q-option-group
-            :options="options"
-            type="checkbox"
-            :select="filterByGenres(model)"
-            v-model="model"
-          />
-        </div>
+      <div class="q-pa-md">
         <q-select
           filled
-          v-model="single"
-          :options="sortingAr"
-          label="Сортировать"
-          :select="sortedByPrice(single)"
+          color="purple-12"
+          v-model="model"
+          :options="option"
+          label="сортировать по жанру"
+          :select="filterByGenres(model)"
           style="width: 250px"
         />
-      </q-card>
+      </div>
+      <q-select
+        filled
+        v-model="single"
+        :options="sortingAr"
+        label="Сортировать по цене"
+        :select="sortedByPrice(single)"
+        style="width: 250px"
+      />
+
       <q-card
         class="my-card col-xl-3 col-md-3 col-sm-6 col-xs-12 flex no-wrap"
-        v-for="book in arr"
-        :key="book.id"
+        v-for="book of searchHandler"
+        :key="book.name"
       >
         <q-card-section>
           <q-img :src="book.image" width="250px">
@@ -94,7 +107,7 @@
 
 <script setup>
 // import
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
@@ -105,7 +118,6 @@ test pinia
 const store = getBooks();
 store.GET_BOOKS_FROM_DB();
 const books = store.SET_BOOKS_FROM_DB;
-
 const router = useRouter();
 /*
  * add data from hasura
@@ -125,38 +137,34 @@ const router = useRouter();
 `);
 const books = computed(() => result.value?.books ?? []); */
 
-const model = ref([]);
-
-/**
- * filter by genres
+const model = ref("");
+const filteredBooks = ref([]);
+/*
+ -------------filter by genres----------
  */
 
-const filteredBooks = ref([]);
-
-const filterByGenres = (model) => {
-  filteredBooks.value.length = 0;
-  for (let i of model) {
-    books.value.map((elem) => {
-      if (elem.genre === i) {
-        filteredBooks.value.push(elem);
-      } else {
-        return;
-      }
-    });
-  }
-};
-
 const selectedGenres = computed(() => {
-  if (filteredBooks.value.length) {
-    return filteredBooks.value;
-  } else {
+  if (!filteredBooks.value.length) {
     return books.value;
+  } else {
+    return filteredBooks.value;
   }
 });
 
-/**
- * addtocartcounter
- */
+const filterByGenres = (model) => {
+  filteredBooks.value.length = 0;
+  books.value.map((elem) => {
+    if (elem.genre === model.value) {
+      filteredBooks.value.push(elem);
+    } else {
+      return;
+    }
+  });
+};
+
+/*
+  -----------addtocartcounter----------
+*/
 
 let counterShop = ref(0);
 const addToCartCounter = (index) => {
@@ -165,7 +173,7 @@ const addToCartCounter = (index) => {
 /**
  * filter genres
  */
-const options = [
+const option = [
   {
     label: "Художественная литература",
     value: "Художественная литература",
@@ -190,14 +198,54 @@ const options = [
     label: "Книги в оригинале",
     value: "Книги в оригинале",
   },
+  {
+    label: "Все книги",
+    value: "Все книги",
+  },
 ];
-// const group = ref("Все жанры");
+
+/*
+ * --------------dialog----------------
+ */
+const descDial = ref("");
+const dialogDesc = (item) => {
+  descDial.value = "";
+  descDial.value = item;
+  icon.value = true;
+};
+const icon = ref(false);
 
 /**
- * sort by price
+ * --------------Add to cart-----------
  */
-const genre = [];
-const sortByGenre = () => {};
+
+const addToCart = (descDial) => {
+  const cloneAddToCart = { ...descDial };
+  store.ADD_TO_CART(cloneAddToCart);
+};
+
+/* 
+----------------------SEARCH-------------
+*/
+
+const inputData = ref("");
+const searchHandler = computed(() => {
+  return selectedGenres.value.filter((elem) => {
+    return elem.title.toLowerCase().includes(inputData.value.toLowerCase());
+  });
+});
+
+/*
+ ------------ sort by price---------------
+ */
+
+const sortByAsc = (d1, d2) => {
+  return d1.price > d2.price ? 1 : -1;
+};
+
+const sortByDesc = (d1, d2) => {
+  return d1.price < d2.price ? 1 : -1;
+};
 const single = ref("");
 const sortingAr = [
   {
@@ -209,43 +257,13 @@ const sortingAr = [
     label: "По убыванию цены",
   },
 ];
-
-const sortByAsc = (d1, d2) => {
-  return d1.price > d2.price ? 1 : -1;
-};
-
-const sortByDesc = (d1, d2) => {
-  return d1.price < d2.price ? 1 : -1;
-};
-const sorting = ref("");
-const arr = ref([...selectedGenres.value]);
 const sortedByPrice = (single) => {
   switch (single.value) {
     case "По возрастанию цены":
-      return arr.value.sort(sortByAsc);
+      return searchHandler.value.sort(sortByAsc);
     case "По убыванию цены":
-      return arr.value.sort(sortByDesc);
+      return searchHandler.value.sort(sortByDesc);
   }
-};
-
-/**
- * dialog
- */
-const descDial = ref("");
-const dialogDesc = (item) => {
-  descDial.value = "";
-  descDial.value = item;
-  icon.value = true;
-};
-const icon = ref(false);
-
-/**
- * Add to cart
- */
-
-const addToCart = (descDial) => {
-  const cloneAddToCart = { ...descDial };
-  store.ADD_TO_CART(cloneAddToCart);
 };
 </script>
 
