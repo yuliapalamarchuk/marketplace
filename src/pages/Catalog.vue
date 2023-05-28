@@ -47,19 +47,6 @@
               label="Подробнее"
               style="width: 100px"
             />
-            <q-btn
-              @click="addToCartCounter(index)"
-              dense
-              color="purple"
-              round
-              icon="local_grocery_store"
-              class="q-ml-md"
-            >
-              <q-tooltip class="bg-indigo" :offset="[10, 10]">
-                Добавить в корзину
-              </q-tooltip>
-              <q-badge color="red" floating>{{ counterShop }}</q-badge>
-            </q-btn>
             <div class="q-pl-sm text-bold text-h6">{{ book.price }} рублей</div>
           </q-card-section>
         </q-card-section>
@@ -172,15 +159,6 @@ const option = [
     value: "Все книги",
   },
 ];
-
-/*
-  -----------addtocartcounter----------
-*/
-
-let counterShop = ref(0);
-const addToCartCounter = (index) => {
-  counterShop.value += 1;
-};
 
 /*
  * --------------dialog----------------

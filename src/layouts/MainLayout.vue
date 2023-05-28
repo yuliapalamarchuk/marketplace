@@ -19,27 +19,12 @@
           class="q-mr-sm"
           no-caps
         />
+
         <div
           class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center"
         >
-          <q-item to="/catalog" class="text-white text-h5">Catalog </q-item>
+          <q-item to="/catalog" class="text-white text-h5">Каталог </q-item>
         </div>
-
-        <q-input
-          dark
-          dense
-          standout
-          use-input
-          color="black"
-          style="width: 300px"
-          v-model="searchInput"
-          @input="inputStore(searchInput)"
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-
         <q-space />
 
         <div class="q-pl-sm q-gutter-sm row items-center no-wrap">
@@ -50,22 +35,17 @@
               <span class="material-icons"> account_circle </span>
             </q-avatar>
 
-            <q-menu auto-close>
-              <q-list dense>
-                <q-item class="GL__menu-link-signed-in">
-                  <q-item-section>
-                    <div>Signed in as <strong>Mary</strong></div>
-                  </q-item-section>
-                </q-item>
-                <q-item to="/profile" clickable class="GL__menu-link">
-                  <q-item-section>Your profile</q-item-section>
-                </q-item>
+            <q-item id="auth-links">
+              <q-btn
+                class="actions-header_login"
+                label="Войти"
+                type="button"
+                @click="login"
+            /></q-item>
 
-                <q-item clickable class="GL__menu-link">
-                  <q-item-section>Sign out</q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
+            <div>
+              <div id="user-button"></div>
+            </div>
           </q-btn>
         </div>
       </q-toolbar>
@@ -76,6 +56,40 @@
     </q-page-container>
   </q-layout>
 </template>
+
+<script setup>
+import { from } from "@apollo/client/core";
+import Clerk from "@clerk/clerk-js";
+import { login, logout } from "../clerk/user";
+
+const publishableKey =
+  "pk_test_cHJlY2lvdXMtYmVhci01LmNsZXJrLmFjY291bnRzLmRldiQ";
+const script = document.createElement("script");
+script.setAttribute("data-clerk-publishable-key", publishableKey);
+script.async = true;
+script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+script.crossOrigin = "anonymous";
+script.addEventListener("load", async function () {
+  await window.Clerk.load();
+
+  const userButton = document.getElementById("user-button");
+  const authLinks = document.getElementById("auth-links");
+
+  window.Clerk.addListener(({ user }) => {
+    authLinks.style.display = user ? "none" : "";
+  });
+
+  if (window.Clerk.user) {
+    window.Clerk.mountUserButton(userButton);
+    userButton.style.margin = "auto";
+
+    localStorage.setItem("session_id", window.Clerk.session.id);
+  }
+});
+document.body.appendChild(script);
+</script>
+
+
 <style lang="sass">
 .GL
   &:hover

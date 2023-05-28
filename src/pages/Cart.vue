@@ -35,7 +35,7 @@
       <div>
         <h5>Итоговая сумма заказа: {{ store.totalValue }}</h5>
         <q-btn
-          style="background: purple; color: white"
+          style="background: black; color: white"
           label="Оформить заказ"
           @click="dialog = true"
         />
@@ -56,7 +56,7 @@
                 lazy-rules
                 :rules="[
                   (val) =>
-                    (val && val.length > 0) || 'Зполните обязательное поле',
+                    (val && val.length > 0) || 'Заполните обязательное поле',
                 ]"
               />
               <q-input
@@ -78,7 +78,7 @@
                 lazy-rules
                 :rules="[
                   (val) =>
-                    (val && val.length > 0) || 'Зполните обязательное поле',
+                    (val && val.length > 0) || 'Заполните обязательное поле',
                 ]"
               />
               <q-input
@@ -89,7 +89,7 @@
                 lazy-rules
                 :rules="[
                   (val) =>
-                    (val && val.length > 0) || 'Зполните обязательное поле',
+                    (val && val.length > 0) || 'Заполните обязательное поле',
                 ]"
               />
               <q-input
@@ -104,8 +104,12 @@
                 label="Я принимаю условия обработки персональных данных"
               />
               <div>
-                <q-btn flat label="Отмена" v-close-popup color="purple" />
-                <q-btn label="Оформить" type="submit" color="purple" />
+                <q-btn flat label="Отмена" v-close-popup color="black" />
+                <q-btn
+                  label="Оформить"
+                  type="submit"
+                  style="background: black; color: white"
+                />
               </div>
             </q-form>
           </div>
