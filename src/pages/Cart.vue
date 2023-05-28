@@ -40,12 +40,15 @@
           @click="dialog = true"
         />
       </div>
-
       <q-dialog v-model="dialog" persistent>
         <q-card>
           <q-card-section class="row items-center"> </q-card-section>
           <div class="q-pa-md" style="max-width: 400px">
-            <q-form @submit.prevent="onSubmit" @reset="onReset" class="q-gutter-md">
+            <q-form
+              @submit.prevent="onSubmit"
+              @reset="onReset"
+              class="q-gutter-md"
+            >
               <q-input
                 filled
                 v-model="name"
@@ -56,7 +59,6 @@
                     (val && val.length > 0) || 'Зполните обязательное поле',
                 ]"
               />
-
               <q-input
                 filled
                 type="tel"
@@ -65,11 +67,9 @@
                 lazy-rules
                 :rules="[
                   (val) =>
-                    (val && val.length>0)|| 'Заполните обязательное поле',
+                    (val && val.length > 0) || 'Заполните обязательное поле',
                 ]"
               />
-
-              
               <q-input
                 filled
                 type="email"
@@ -81,7 +81,6 @@
                     (val && val.length > 0) || 'Зполните обязательное поле',
                 ]"
               />
-
               <q-input
                 filled
                 type="text"
@@ -93,11 +92,17 @@
                     (val && val.length > 0) || 'Зполните обязательное поле',
                 ]"
               />
+              <q-input
+                filled
+                type="text"
+                v-model="formCom"
+                label="Комментарий"
+                lazy-rules
+              />
               <q-toggle
                 v-model="accept"
                 label="Я принимаю условия обработки персональных данных"
               />
-
               <div>
                 <q-btn flat label="Отмена" v-close-popup color="purple" />
                 <q-btn label="Оформить" type="submit" color="purple" />
@@ -115,20 +120,25 @@ import { defineComponent, ref, computed, onMounted } from "vue";
 import { getBooks } from "stores/books";
 import { ClosePopup, useQuasar } from "quasar";
 
+/*
+ -------------pinia----------
+ */
+
 const store = getBooks();
 store.GET_BOOKS_FROM_DB();
 const books = store.SET_CART;
 
-/**
- * Order form
+/*
+ -------------order form----------
  */
+
 const dialog = ref(false);
 const $q = useQuasar();
 const name = ref(null);
-const formNum = ref(null)
-const formEmail = ref(null)
-const formCom = ref(null)
-const formAddress = ref(null)
+const formNum = ref(null);
+const formEmail = ref(null);
+const formCom = ref(null);
+const formAddress = ref(null);
 const accept = ref(false);
 
 const onSubmit = () => {
@@ -137,34 +147,33 @@ const onSubmit = () => {
       color: "red-5",
       textColor: "white",
       icon: "warning",
-      message: "You need to accept the license and terms first",
+      message:
+        "Необходимо согласиться с условиями обработки персональных данных",
     });
-    
   } else {
     $q.notify({
       color: "green-4",
       textColor: "white",
       icon: "cloud_done",
-      message: "Submitted",
+      message: "Заказ оформлен",
     });
-    onReset()
-    dialog.value = false
-    
+    onReset();
+    dialog.value = false;
   }
 };
 
 const onReset = () => {
   name.value = null;
-  formNum.value = null
-  formEmail.value = null
-  accept.value= null
-  formAddress.value = null
-
+  formNum.value = null;
+  formEmail.value = null;
+  accept.value = null;
+  formAddress.value = null;
 };
 
-/**
- * quantity
+/*
+ -------------quantity----------
  */
+
 const increment = (book) => {
   store.INCREMENT(book);
 };

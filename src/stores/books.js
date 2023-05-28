@@ -27,18 +27,12 @@ export const getBooks = defineStore("counter", {
     },
     ADD_TO_CART(descDial) {
       if (this.cart.length) {
-        let isProductExists = false;
         this.cart.map((i) => {
           if (i.title === descDial.title) {
-            isProductExists = true;
             i.quantity++;
             this.totalValue += i.price;
           }
-          return i;
         });
-        if (!isProductExists) {
-          this.cart.push(descDial);
-        }
       } else {
         descDial.quantity = 1;
         this.cart.push(descDial);
@@ -52,16 +46,12 @@ export const getBooks = defineStore("counter", {
     DECREMENT(book) {
       const bookIndex = this.cart.findIndex((item) => item === book);
       if (book.quantity > 1) {
-        book.quantity--;
         this.totalValue -= book.price;
+        book.quantity--;
       } else {
+        this.totalValue -= book.price;
         this.cart.splice(bookIndex, 1);
       }
-    },
-
-    INPUTDATA(input) {
-      this.inputData = "";
-      this.inputData = input;
     },
   },
 });

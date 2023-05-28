@@ -8,7 +8,7 @@
     >
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn
-         to="/homepage"
+          to="/homepage"
           round
           dense
           flat
@@ -76,19 +76,6 @@
     </q-page-container>
   </q-layout>
 </template>
-
-<script setup>
-import { ref } from "vue";
-import { getBooks } from "stores/books";
-
-const store = getBooks()
-const searchInput = ref('')
-
-const inputToStore = (searchInput)=>{
-store.INPUTDATA()
-}
-</script>
-
 <style lang="sass">
 .GL
   &:hover

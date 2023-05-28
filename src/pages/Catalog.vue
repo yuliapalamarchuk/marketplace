@@ -1,20 +1,15 @@
 <template>
   <q-page>
     <div class="text-center text-h2 q-pa-xl">Каталог книг</div>
-    <div class="flex q-pb-md">
-      <q-input
-        filled
-        v-model="inputData"
-        label="Label"
-        placeholder="Placeholder"
-        :dense="dense"
-        class="bg-grey"
-        style="width: 300px"
-      />
-    </div>
-    <div class="">{{ store.counter }}</div>
-    <div class="row col-12 justify-end">
-      <div class="q-pa-md">
+    <div class="row col">
+      <div class="flex col-3 justify-around column">
+        <q-input
+          filled
+          v-model="inputData"
+          label="Поиск"
+          placeholder="Введите название"
+          :dense="dense"
+        />
         <q-select
           filled
           color="purple-12"
@@ -22,18 +17,15 @@
           :options="option"
           label="сортировать по жанру"
           :select="filterByGenres(model)"
-          style="width: 250px"
+        />
+        <q-select
+          filled
+          v-model="single"
+          :options="sortingAr"
+          label="Сортировать по цене"
+          :select="sortedByPrice(single)"
         />
       </div>
-      <q-select
-        filled
-        v-model="single"
-        :options="sortingAr"
-        label="Сортировать по цене"
-        :select="sortedByPrice(single)"
-        style="width: 250px"
-      />
-
       <q-card
         class="my-card col-xl-3 col-md-3 col-sm-6 col-xs-12 flex no-wrap"
         v-for="book of searchHandler"
@@ -66,13 +58,11 @@
               <q-tooltip class="bg-indigo" :offset="[10, 10]">
                 Добавить в корзину
               </q-tooltip>
-
               <q-badge color="red" floating>{{ counterShop }}</q-badge>
             </q-btn>
             <div class="q-pl-sm text-bold text-h6">{{ book.price }} рублей</div>
           </q-card-section>
         </q-card-section>
-
         <q-dialog v-model="icon">
           <q-card>
             <q-card-section class="row items-center q-pb-none">
@@ -104,41 +94,27 @@
   </q-page>
 </template>
 
-
 <script setup>
-// import
+/*
+ -------------import----------
+ */
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { getBooks } from "stores/books";
-/* 
-test pinia
-*/
+
+/*
+ -------------pinia----------
+ */
+
 const store = getBooks();
 store.GET_BOOKS_FROM_DB();
 const books = store.SET_BOOKS_FROM_DB;
 const router = useRouter();
-/*
- * add data from hasura
- */
-/* const { result, loading } = useQuery(gql`
-  query MyQuery {
-    books {
-      author
-      genre
-      description
-      image
-      price
-      title
-      fulldescription
-    }
-  }
-`);
-const books = computed(() => result.value?.books ?? []); */
-
 const model = ref("");
 const filteredBooks = ref([]);
+
 /*
  -------------filter by genres----------
  */
@@ -163,16 +139,9 @@ const filterByGenres = (model) => {
 };
 
 /*
-  -----------addtocartcounter----------
+  -----------filter genres----------
 */
 
-let counterShop = ref(0);
-const addToCartCounter = (index) => {
-  counterShop.value += 1;
-};
-/**
- * filter genres
- */
 const option = [
   {
     label: "Художественная литература",
@@ -205,8 +174,18 @@ const option = [
 ];
 
 /*
+  -----------addtocartcounter----------
+*/
+
+let counterShop = ref(0);
+const addToCartCounter = (index) => {
+  counterShop.value += 1;
+};
+
+/*
  * --------------dialog----------------
  */
+
 const descDial = ref("");
 const dialogDesc = (item) => {
   descDial.value = "";
@@ -239,12 +218,12 @@ const searchHandler = computed(() => {
  ------------ sort by price---------------
  */
 
-const sortByAsc = (d1, d2) => {
-  return d1.price > d2.price ? 1 : -1;
+const sortByAsc = (x, y) => {
+  return x.price > y.price ? 1 : -1;
 };
 
-const sortByDesc = (d1, d2) => {
-  return d1.price < d2.price ? 1 : -1;
+const sortByDesc = (x, y) => {
+  return x.price < y.price ? 1 : -1;
 };
 const single = ref("");
 const sortingAr = [
@@ -267,8 +246,3 @@ const sortedByPrice = (single) => {
 };
 </script>
 
-<style>
-.col {
-  max-height: 5.6em;
-}
-</style>
